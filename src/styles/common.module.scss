@@ -1,1 +1,20 @@
-// TODO
+.max__width {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.title {
+  font-weight: 700;
+  font-size: 1.75rem;
+}
+
+.icon__text {
+  color: var(--gray-300);
+
+  display: flex;
+  align-items: center;
+
+  svg {
+    margin-right: 0.5rem;
+  }
+}
