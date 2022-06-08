@@ -1,1 +1,36 @@
-// TODO
+.banner {
+  width: 100%;
+  max-height: 400px;
+  object-fit: cover;
+  object-position: center;
+}
+
+.post__header {
+  padding: 3rem 0;
+  h2 {
+    font-size: 3rem;
+    font-weight: 700;
+  }
+}
+
+.post__info {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.post__content {
+  padding: 2rem 0;
+  h2 {
+    font-size: 2.25rem;
+    font-weight: 700;
+  }
+
+  div {
+    font-size: 1.125rem;
+    line-height: 1.5rem;
+    color: var(--gray-300);
+    margin-top: 4rem;
+  }
+}
