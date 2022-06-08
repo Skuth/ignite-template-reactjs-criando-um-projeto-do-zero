@@ -3,6 +3,7 @@ import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
 import { FiCalendar, FiUser, FiClock } from 'react-icons/fi';
 import { RichText } from 'prismic-dom';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 
 import { getPrismicClient } from '../../services/prismic';
 
@@ -13,8 +14,10 @@ import styles from './post.module.scss';
 
 interface Post {
   first_publication_date: string | null;
+  uid: string;
   data: {
     title: string;
+    subtitle: string;
     banner: {
       url: string;
     };
@@ -33,13 +36,32 @@ interface PostProps {
 }
 
 const Post: NextPage<PostProps> = ({ post }) => {
-  const getReadTime = useCallback(() => {
-    const text = RichText.asText(post.data.content.map(data => data.body)[0]);
+  const router = useRouter();
 
-    return Number(text.length / 200).toFixed(0);
+  const getReadTime = useCallback(() => {
+    const totalWords = post.data.content.reduce((prev, item) => {
+      let total = 0;
+
+      total += prev + item.heading.split(' ').length;
+      item.body.forEach(body => {
+        total += body.text.split(' ').length;
+      });
+
+      return total;
+    }, 0);
+
+    return Math.ceil(totalWords / 200);
   }, [post]);
 
-  return post ? (
+  if (router.isFallback) {
+    return (
+      <main className={commonStyles.max__width}>
+        <p>Carregando...</p>
+      </main>
+    );
+  }
+
+  return (
     <>
       <Head>
         <title>spacetraveling | {post.data.title}</title>
@@ -57,7 +79,7 @@ const Post: NextPage<PostProps> = ({ post }) => {
           <div className={styles.post__info}>
             <time className={commonStyles.icon__text}>
               <FiCalendar />
-              {post.first_publication_date}
+              {getFormattedDate(post.first_publication_date)}
             </time>
 
             <p className={commonStyles.icon__text}>
@@ -88,10 +110,6 @@ const Post: NextPage<PostProps> = ({ post }) => {
         ))}
       </main>
     </>
-  ) : (
-    <main className={commonStyles.max__width}>
-      <p>Carregando...</p>
-    </main>
   );
 };
 
@@ -112,13 +130,20 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   const response = await prismic.getByUID('posts', String(params.slug));
 
   const post: Post = {
+    uid: response.uid,
     data: {
       title: response.data.title,
+      subtitle: response.data.subtitle,
       author: response.data.author,
-      banner: response.data.banner,
-      content: response.data.content,
+      banner: {
+        url: response.data.banner.url,
+      },
+      content: response.data.content.map(content => ({
+        heading: content.heading,
+        body: [...content.body],
+      })),
     },
-    first_publication_date: getFormattedDate(response.first_publication_date),
+    first_publication_date: response.first_publication_date,
   };
 
   return {

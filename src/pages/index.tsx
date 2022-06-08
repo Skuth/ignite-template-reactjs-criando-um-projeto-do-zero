@@ -38,7 +38,7 @@ const getFormattedPost = (response: any): Post[] => {
       subtitle: post.data.subtitle || '',
       author: post.data.author || '',
     },
-    first_publication_date: getFormattedDate(post.first_publication_date),
+    first_publication_date: post.first_publication_date,
   }));
 
   return data;
@@ -70,7 +70,7 @@ const Home: NextPage<HomeProps> = ({ postsPagination }) => {
               <div>
                 <time className={commonStyles.icon__text}>
                   <FiCalendar />
-                  {post.first_publication_date}
+                  {getFormattedDate(post.first_publication_date)}
                 </time>
                 <p className={commonStyles.icon__text}>
                   <FiUser />

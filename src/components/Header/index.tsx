@@ -9,11 +9,11 @@ const Header: React.FC = () => {
     <nav className={`${styles.navbar} ${commonStyles.max__width}`}>
       <Link href="/" passHref>
         <a>
-          <Image src="/logo.svg" alt="spacetraveling" width={238} height={25} />
+          <Image src="/logo.svg" alt="logo" width={238} height={25} />
         </a>
       </Link>
     </nav>
   );
 };
 
-export { Header };
+export default Header;
